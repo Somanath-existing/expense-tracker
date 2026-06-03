@@ -32,55 +32,42 @@ Open **[http://localhost:3000](http://localhost:3000)**
 
 ## ☁️ Free Cloud Deployment Guide
 
-Deploy this app for **$0** using **Render** (hosting) + **Neon** (free PostgreSQL).
+Deploy this app for **$0** with **instant, zero-sleep response times** using **Vercel** (hosting) + **Supabase** (free PostgreSQL).
 
-### Step 1 — Create a Free PostgreSQL Database on Neon
+### Step 1 — Get a Free PostgreSQL Database on Supabase
 
-1. Go to **[neon.tech](https://neon.tech/)** and sign up (free, no credit card).
-2. Click **"Create Project"** → give it a name (e.g., `expenseflow`).
-3. Once created, copy the **connection string** from the dashboard. It looks like:
+1. Go to **[supabase.com](https://supabase.com)** and sign up (free, no credit card).
+2. Click **"New Project"** → name it `expenseflow` and set a database password.
+3. Once the project is created, navigate to **Project Settings → Database** from the sidebar.
+4. Scroll down to the **Connection string** section, select the **URI** tab, and copy the connection string. It will look like:
    ```
-   postgresql://user:password@ep-xxx.us-east-2.aws.neon.tech/neondb?sslmode=require
+   postgresql://postgres.[your-project-id]:[your-password]@aws-0-ap-south-1.pooler.supabase.com:6543/postgres
    ```
-4. Save this string — you'll paste it into Render in the next step.
+5. Replace `[your-password]` with the password you set during project creation, and save this URL.
 
-### Step 2 — Push Code to GitHub
+### Step 2 — Push the Code to GitHub
 
-1. Create a new repository on GitHub (e.g., `expense-tracker`).
-2. Push your code:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit"
-   git branch -M main
-   git remote add origin https://github.com/YOUR_USERNAME/expense-tracker.git
-   git push -u origin main
-   ```
+Commit the changes (including `vercel.json` and the serverless-ready `server.js`) and push to GitHub:
+```bash
+git add .
+git commit -m "Configure Vercel serverless deployment"
+git push origin main
+```
 
-### Step 3 — Deploy to Render (Free)
+### Step 3 — Deploy to Vercel (Free)
 
-1. Go to **[render.com](https://render.com/)** and sign up (free, no credit card).
-2. Click **"New" → "Web Service"**.
-3. Connect your GitHub repo (`expense-tracker`).
-4. Configure the service:
-   | Setting        | Value              |
-   | -------------- | ------------------ |
-   | **Name**       | `expenseflow`      |
-   | **Runtime**    | `Node`             |
-   | **Build Cmd**  | `npm install`      |
-   | **Start Cmd**  | `node server.js`   |
-   | **Plan**       | `Free`             |
-5. Under **"Environment"**, add an environment variable:
-   | Key             | Value                                        |
-   | --------------- | -------------------------------------------- |
-   | `DATABASE_URL`  | *(paste the Neon connection string from Step 1)* |
-6. Click **"Deploy Web Service"**.
-7. Wait ~2 minutes. Render will build the app and give you a live URL like:
-   ```
-   https://expenseflow.onrender.com
-   ```
+1. Go to **[vercel.com](https://vercel.com)** and sign up or sign in using your GitHub account.
+2. Click **"Add New" → "Project"**.
+3. Import your `expense-tracker` repository.
+4. Under the **Configure Project** panel:
+   * Vercel will automatically configure the routing using the `vercel.json` file in the repo.
+   * Expand **Environment Variables** and add:
+     * **Name**: `DATABASE_URL`
+     * **Value**: *(paste the connection string from Step 1)*
+5. Click **"Deploy"**.
+6. Within a minute, your app will be live with a permanent, secure, and always-on URL (e.g., `https://expense-tracker-nine.vercel.app`)! 🎉
 
-That's it — your app is live with a real PostgreSQL database! 🎉
+---
 
 ---
 

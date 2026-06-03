@@ -8,6 +8,25 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Middleware to ensure database is initialized before API requests are processed (crucial for serverless)
+let dbInitialized = false;
+async function ensureDb() {
+  if (!dbInitialized) {
+    await initializeDb();
+    dbInitialized = true;
+  }
+}
+
+app.use('/api', async (req, res, next) => {
+  try {
+    await ensureDb();
+    next();
+  } catch (err) {
+    console.error('Database initialization failed:', err);
+    res.status(500).json({ error: 'Database initialization failed' });
+  }
+});
+
 const VALID_CATEGORIES = ['Food', 'Transport', 'Shopping', 'Bills', 'Entertainment', 'Other'];
 
 function validateExpense(data) {
@@ -131,14 +150,15 @@ app.get('*', (req, res) => {
 });
 
 // --- Startup ---
-async function start() {
-  await initializeDb();
-  app.listen(PORT, () => {
-    console.log(`\n  🚀 ExpenseFlow running at  http://localhost:${PORT}\n`);
+if (!process.env.VERCEL) {
+  initializeDb().then(() => {
+    app.listen(PORT, () => {
+      console.log(`\n  🚀 ExpenseFlow running at  http://localhost:${PORT}\n`);
+    });
+  }).catch(err => {
+    console.error('Failed to start server:', err);
+    process.exit(1);
   });
 }
 
-start().catch(err => {
-  console.error('Failed to start server:', err);
-  process.exit(1);
-});
+module.exports = app;
