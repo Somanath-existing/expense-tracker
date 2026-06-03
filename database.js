@@ -22,7 +22,10 @@ if (IS_PG) {
       : { rejectUnauthorized: false },
   });
 } else {
-  const Database = require('better-sqlite3');
+  // Dynamic require prevents Vercel's bundler from trying to bundle
+  // the native better-sqlite3 module (which fails on serverless)
+  const sqliteModuleName = 'better-sqlite3';
+  const Database = require(sqliteModuleName);
   sqlite = new Database(path.join(__dirname, 'expenses.db'));
   sqlite.pragma('journal_mode = WAL');
 }
