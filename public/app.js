@@ -78,7 +78,10 @@ async function api(url, opts = {}) {
     ...opts,
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.errors ? data.errors.join(', ') : data.error || 'Request failed');
+  if (!res.ok) {
+    const errorMsg = data.details ? `${data.error}: ${data.details}` : (data.errors ? data.errors.join(', ') : data.error || 'Request failed');
+    throw new Error(errorMsg);
+  }
   return data;
 }
 
